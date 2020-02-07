@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 import '../styles/home.css'
 
 class Home extends Component {
@@ -19,10 +20,13 @@ class Home extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        if (this.state.error !== '') {
+        if (!!this.state.error) {
             this.setState({
                 showError: true
             });
+        } else {
+            this.handleAPI();
+            alert('submited')
         }
 
 
@@ -57,7 +61,32 @@ class Home extends Component {
             showButton,
             showError
         });
-        console.log(this.state.error)
+    };
+
+    async componentDidMount() {
+        let personData;
+        let facilityData;
+        let exposureData;
+        await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/person')
+            .then( res => {
+                personData = res;
+                console.log(res)
+                }
+            );
+        await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/facility/' + personData.data.person1 )
+            .then( res => {
+                facilityData = res;
+                console.log(res)
+                }
+            );
+        await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/exposure/' + facilityData.data.facility2 )
+            .then( res => {
+                exposureData = res;
+                console.log(res)
+                }
+            );
+        let result = facilityData.data.facility2 * exposureData.data.exposure;
+        console.log('rezultatas' + result);
     };
 
     render() {
