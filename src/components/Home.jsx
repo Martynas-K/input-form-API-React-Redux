@@ -8,7 +8,8 @@ class Home extends Component {
         error: '',
         inputIsValid: true,
         showButton: false,
-        showError: false
+        showError: false,
+        result: null,
     };
 
     handleInputChange = async (e) => {
@@ -25,11 +26,8 @@ class Home extends Component {
                 showError: true
             });
         } else {
-            this.handleAPI();
-            alert('submited')
+            alert('Result is: ' + this.state.result)
         }
-
-
     };
 
     handleValidation = () =>{
@@ -67,27 +65,45 @@ class Home extends Component {
         let personData;
         let facilityData;
         let exposureData;
+        let result;
+        let errorsAPI = [];
+
         await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/person')
-            .then( res => {
+            .then((res) => {
                 personData = res;
-                console.log(res)
-                }
-            );
-        await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/facility/' + personData.data.person1 )
-            .then( res => {
-                facilityData = res;
-                console.log(res)
-                }
-            );
-        await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/exposure/' + facilityData.data.facility2 )
-            .then( res => {
-                exposureData = res;
-                console.log(res)
-                }
-            );
-        let result = facilityData.data.facility2 * exposureData.data.exposure;
-        console.log('rezultatas' + result);
-    };
+            }).catch(error => {
+                if (error.response) { errorsAPI.push(error.response) }
+        });
+
+        if (personData && !errorsAPI.length) {
+           await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/facility/' + personData.data.person1)
+                .then((res) => {
+                    facilityData = res;
+                }).catch((error) => { if (error.response) { errorsAPI.push(error.response) }
+            });
+        }
+        if (facilityData && !errorsAPI.length) {
+            await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/exposure/' + facilityData.data.facility2)
+                .then((res) => {
+                    exposureData = res;
+                }).catch((error) => {
+                    if (error.response) { errorsAPI.push(error.response) }
+            });
+        }
+
+        if (errorsAPI.length) {
+            this.setState({
+                error: 'Failed to receive API data',
+                showError: true
+            });
+        }
+        else {
+            result = facilityData.data.facility2 * exposureData.data.exposure;
+            this.setState({
+                result
+            });
+        }
+    }
 
     render() {
         return (
@@ -100,6 +116,8 @@ class Home extends Component {
                            onChange={this.handleInputChange}/>
                     <button type="submit" className={!this.state.showButton ? "hide" : ""}>submit</button>
                     <div className={!this.state.showError ? "hide" : ""}>{this.state.error}</div>
+
+                    <div>Result is: {this.state.result}</div>
                 </form>
             </div>
         );
