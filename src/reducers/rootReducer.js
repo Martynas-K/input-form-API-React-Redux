@@ -1,7 +1,6 @@
 const initState = {
     input: '',
     error: '',
-    inputIsValid: true,
     showButton: false,
     showError: false,
     result: null,
@@ -20,22 +19,22 @@ const rootReducer = (state = initState, action) => {
         let showButton = true;
         let showError;
 
-        if(!action.input){
-            showButton = false;
-            showError = true;
-        }
         if(typeof action.input !== "undefined") {
             error = '';
             if (!action.input.match(/^[A-Za-z]+$/)) {
                 showButton = false;
-                error = "Only letters";
+                error = "Type letters only please.";
                 showError = true;
             } else if (!action.input.match(/^.{0,10}$/)) {
                 showButton = false;
-                error = "max 10 letters";
+                error = "Type up to ten letters please.";
                 showError = true;
             }
         }
+        if (action.input === ''){
+            error = '';
+        }
+
         return {
             ...state,
             input: action.input,

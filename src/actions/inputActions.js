@@ -11,3 +11,11 @@ export const validateInput = (input) => {
         input
     }
 };
+
+export const addError = (error, showError) => {
+    return {
+        type: 'ADD_API_ERRORS',
+        error,
+        showError
+    }
+};

@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import '../styles/home.css'
-import {updateInput} from "../actions/inputActions";
-import {validateInput} from "../actions/inputActions";
-import {addApiError, addApiResult} from "../actions/apiActions";
+import {addError, updateInput, validateInput} from "../actions/inputActions";
+import {addResult} from "../actions/resultActions";
 
 class Home extends Component {
 
@@ -12,66 +11,85 @@ class Home extends Component {
         let input = e.target.value;
         this.props.updateInputOnChange(input);
         this.props.validateInputOnChange(input);
+        console.log(this.props)
     };
 
-    handleSubmit = (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
-        if (!this.props.error) {
-            alert('Result is: ' + this.props.result)
-        }
-    };
-
-    async componentDidMount() {
+        let user = 'Tom';
+        let accessGranted = true;
         let personData;
         let facilityData;
         let exposureData;
         let result;
         let errorsAPI = [];
 
-        await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/person')
-            .then((res) => {
-                personData = res;
-            }).catch(error => {
-                if (error.response) { errorsAPI.push(error.response) }
-        });
+        console.log(this.props.input);
 
-        if (personData && !errorsAPI.length) {
-           await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/facility/' + personData.data.person1)
+        if (this.props.input.toLowerCase() === user.toLowerCase()) {
+            console.log('if passed');
+            await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/person/' + user.toLowerCase())
                 .then((res) => {
+                    console.log('axios 1 passed');
+                    personData = res;
+                }).catch(error => {
+                    if (error.response) {
+                        errorsAPI.push(error.response)
+                    }
+                });
+        } else { accessGranted = false }
+
+        if (accessGranted && personData && !errorsAPI.length) {
+            await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/facility/' + personData.data.person1)
+                .then((res) => {
+                    console.log('axios 2 passed');
+
                     facilityData = res;
-                }).catch((error) => { if (error.response) { errorsAPI.push(error.response) }
-            });
+                }).catch((error) => {
+                    if (error.response) {
+                        errorsAPI.push(error.response)
+                    }
+                });
         }
-        if (facilityData && !errorsAPI.length) {
+        if (accessGranted && facilityData && !errorsAPI.length) {
             await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/exposure/' + facilityData.data.facility2)
                 .then((res) => {
+                    console.log('axios 3 passed');
+
                     exposureData = res;
                 }).catch((error) => {
-                    if (error.response) { errorsAPI.push(error.response) }
-            });
+                    if (error.response) {
+                        errorsAPI.push(error.response)
+                    }
+                });
         }
-
-        if (errorsAPI.length) {
-            let error = 'Failed to receive API data';
+        if (!accessGranted){
+            let error = 'You are not Tom. Please go away.';
             let showError = true;
-            this.props.addApiErrorsOnFetch(error, showError);
+            this.props.addErrorsOnFetch(error, showError);
+        } else if (errorsAPI.length) {
+            let error = 'Failed to receive data from API.';
+            let showError = true;
+            this.props.addErrorsOnFetch(error, showError);
         } else {
             result = facilityData.data.facility2 * exposureData.data.exposure;
-            this.props.addApiResultOnFetch(result);
+            this.props.addResultOnFetch(result);
         }
-    }
+    };
 
     render() {
         return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
-                    <h2>input here</h2>
-                    <input type="text" name="input"
-                           placeholder="add text here"
+            <div className={'body'}>
+                <form className={"form-container"} onSubmit={this.handleSubmit}>
+                    <h1 className={'header'}>Ahh, Tom. We were expecting you.</h1>
+                    <h2 className={'subheader'}>Please enter your name to calculate the answer to the Ultimate Question of Life, the Universe, and Everything.</h2>
+                    <input className={"input-box"}
+                           type="text" name="input"
+                           placeholder="type up to 10 letters here..."
                            value={this.props.input}
                            onChange={this.handleInputChange}/>
-                    <button type="submit" className={!this.props.showButton ? "hide" : ""}>submit</button>
-                    <div className={!this.props.showError ? "hide" : ""}>{this.props.error}</div>
+                    <button type="submit" className={`button ${!this.props.showButton ? "hide" : ""}`}>Submit</button>
+                    <div className={`error ${!this.props.showError ? "hide" : ""}`}>{this.props.error}</div>
 
                     <div>Result is: {this.props.result}</div>
                 </form>
@@ -84,7 +102,6 @@ const mapStateToProps = (state) => {
     return {
         input: state.input,
         error: state.error,
-        inputIsValid: state.inputIsValid,
         showButton: state.showButton,
         showError: state.showError,
         result: state.result,
@@ -94,8 +111,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
         updateInputOnChange: (input) => { dispatch(updateInput(input)) },
         validateInputOnChange: (input) => { dispatch(validateInput(input)) },
-        addApiErrorsOnFetch: (error, showError) => { dispatch(addApiError(error, showError)) },
-        addApiResultOnFetch: (result) => { dispatch(addApiResult(result)) },
+        addErrorsOnFetch: (error, showError) => { dispatch(addError(error, showError)) },
+        addResultOnFetch: (result) => { dispatch(addResult(result)) },
   }
 };
 
