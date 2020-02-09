@@ -14,14 +14,14 @@ class Home extends Component {
 
     handleSubmit = async (e) => {
         e.preventDefault();
-        let user = 'Tom';
-        let accessGranted = true;
-        let personData;
-        let facilityData;
-        let exposureData;
-        let result;
-        let errorsAPI = [];
-        let showOverlay = false;
+        let user = 'Tom',
+            accessGranted = true,
+            personData,
+            facilityData,
+            exposureData, 
+            result,
+            errorsAPI = [],
+            showOverlay = false;
 
         if (this.props.input.toLowerCase() === user.toLowerCase()) {
             await axios.get('https://c01863c8-3c7b-4f7e-a7a3-5945459c6f3f.mock.pstmn.io/person/' + user.toLowerCase())
