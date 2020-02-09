@@ -4,3 +4,10 @@ export const addResult = (result) => {
         result,
     }
 };
+
+export const addOverlay = (showOverlay) => {
+    return {
+        type: 'SHOW_OVERLAY',
+        showOverlay,
+    }
+};

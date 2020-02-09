@@ -4,6 +4,7 @@ const initState = {
     showButton: false,
     showError: false,
     result: null,
+    showOverlay: false
 };
 
 const rootReducer = (state = initState, action) => {
@@ -56,6 +57,13 @@ const rootReducer = (state = initState, action) => {
         return {
             ...state,
             result: action.result,
+        }
+    }
+
+    if (action.type === 'SHOW_OVERLAY') {
+        return {
+            ...state,
+            showOverlay: action.showOverlay,
         }
     }
     return state;

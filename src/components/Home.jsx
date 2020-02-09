@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import '../styles/home.css'
 import {addError, updateInput, validateInput} from "../actions/inputActions";
-import {addResult} from "../actions/resultActions";
+import {addResult, addOverlay} from "../actions/resultActions";
 
 class Home extends Component {
 
@@ -23,12 +23,13 @@ class Home extends Component {
         let exposureData;
         let result;
         let errorsAPI = [];
+        let showOverlay = false;
 
         console.log(this.props.input);
 
         if (this.props.input.toLowerCase() === user.toLowerCase()) {
             console.log('if passed');
-            await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/person/' + user.toLowerCase())
+            await axios.get('https://c01863c8-3c7b-4f7e-a7a3-5945459c6f3f.mock.pstmn.io/person/' + user.toLowerCase())
                 .then((res) => {
                     console.log('axios 1 passed');
                     personData = res;
@@ -40,7 +41,7 @@ class Home extends Component {
         } else { accessGranted = false }
 
         if (accessGranted && personData && !errorsAPI.length) {
-            await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/facility/' + personData.data.person1)
+            await axios.get('https://c01863c8-3c7b-4f7e-a7a3-5945459c6f3f.mock.pstmn.io/facility/' + personData.data.person1)
                 .then((res) => {
                     console.log('axios 2 passed');
 
@@ -52,7 +53,7 @@ class Home extends Component {
                 });
         }
         if (accessGranted && facilityData && !errorsAPI.length) {
-            await axios.get('http://ad918e25-e72c-4029-be77-4313d3f4d79f.mock.pstmn.io/exposure/' + facilityData.data.facility2)
+            await axios.get('https://c01863c8-3c7b-4f7e-a7a3-5945459c6f3f.mock.pstmn.io/exposure/' + facilityData.data.facility2)
                 .then((res) => {
                     console.log('axios 3 passed');
 
@@ -74,12 +75,14 @@ class Home extends Component {
         } else {
             result = facilityData.data.facility2 * exposureData.data.exposure;
             this.props.addResultOnFetch(result);
+            showOverlay = true;
+            this.props.showOverlayOnValidSubmit(showOverlay);
         }
     };
 
     render() {
         return (
-            <div className={'body'}>
+            <div className={`body ${this.props.showOverlay ? "opacity" : ""}`}>
                 <form className={"form-container"} onSubmit={this.handleSubmit}>
                     <h1 className={'header'}>Ahh, Tom. We were expecting you.</h1>
                     <h2 className={'subheader'}>Please enter your name to calculate the answer to the Ultimate Question of Life, the Universe, and Everything.</h2>
@@ -105,6 +108,7 @@ const mapStateToProps = (state) => {
         showButton: state.showButton,
         showError: state.showError,
         result: state.result,
+        showOverlay: state.showOverlay
     }
 };
 const mapDispatchToProps = (dispatch) => {
@@ -113,6 +117,7 @@ const mapDispatchToProps = (dispatch) => {
         validateInputOnChange: (input) => { dispatch(validateInput(input)) },
         addErrorsOnFetch: (error, showError) => { dispatch(addError(error, showError)) },
         addResultOnFetch: (result) => { dispatch(addResult(result)) },
+        showOverlayOnValidSubmit: (showOverlay) => { dispatch(addOverlay(showOverlay)) },
   }
 };
 
