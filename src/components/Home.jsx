@@ -91,10 +91,10 @@ class Home extends Component {
                            placeholder="type up to 10 letters here..."
                            value={this.props.input}
                            onChange={this.handleInputChange}/>
-                    <button type="submit" className={`button ${!this.props.showButton ? "hide" : ""}`}>Submit</button>
-                    <div className={`error ${!this.props.showError ? "hide" : ""}`}>{this.props.error}</div>
-
-                    <div>Result is: {this.props.result}</div>
+                    <div className={"button-error-container"}>
+                        <button type="submit" className={`button ${!this.props.showButton ? "hide" : ""}`}>Submit</button>
+                        <div className={`error ${!this.props.showError ? "hide" : ""}`}>{this.props.error}</div>
+                    </div>
                 </form>
             </div>
         );

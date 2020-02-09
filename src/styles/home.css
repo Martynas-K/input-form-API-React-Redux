@@ -1,8 +1,8 @@
-
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
 }
 
 .body {
@@ -36,7 +36,7 @@
 }
 
 .input-box {
-    margin: 20px;
+    margin-top: 20px;
     padding: 10px;
     width: 25%;
     outline: none;
@@ -59,10 +59,18 @@
     color: transparent;
 }
 
+.button-error-container {
+    margin: 15px;
+    height: 50px;
+    width: 100%;
+}
+
 .button {
     padding: 10px;
+    margin: 10px;
     width: 25%;
     background-color: #003f63;
+    border: solid #003f63 3px;
     border-radius: 7px;
     outline: none;
     color: #f8f8f6;
@@ -71,12 +79,15 @@
     cursor: pointer;
 }
 
+.button:hover {
+    background-color: #ffffff;
+    color: #003f63;
+}
+
 .error{
-    padding: 5px;
     color: crimson;
     font-size: 16px;
 }
-
 
 .hide {
     display: none;
@@ -87,5 +98,5 @@
 }
 
 .opacity {
-    opacity: 0.4;
+    opacity: 0.3;
 }

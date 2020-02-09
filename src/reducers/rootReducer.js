@@ -28,7 +28,7 @@ const rootReducer = (state = initState, action) => {
                 showError = true;
             } else if (!action.input.match(/^.{0,10}$/)) {
                 showButton = false;
-                error = "Type up to ten letters please.";
+                error = "Type up to 10 letters please.";
                 showError = true;
             }
         }

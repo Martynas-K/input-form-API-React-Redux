@@ -4,19 +4,19 @@ import { connect } from 'react-redux';
 
 
 class HomeOverlay extends Component {
-    render() {
+     render() {
             console.log('hello')
         return (
             <div className={this.props.showOverlay ? 'show' : 'hide'}>
                 <div className={"overlay"}>
                     <div className={"answer-text"}>It's {this.props.result}.</div>
-                    <button className={"answer-button"}>Cool.</button>
+                    <button
+                            className={"answer-button"}
+                            onClick={() => window.location.reload()}>Cool.</button>
                 </div>
             </div>
         )
     }
-
-
 }
 
 const mapStateToProps = (state) => {

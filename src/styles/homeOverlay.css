@@ -11,12 +11,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, .95);
+    background-color: rgba(0, 0, 0, .9);
 }
 
 .answer-text {
     margin: 30px;
-    font-size: 80px;
+    font-size: 90px;
     font-weight: bold;
     color: #f8f8f6;
 }
@@ -26,7 +26,7 @@
     width: 140px;
     background-color: #f8f8f6;
     border-radius: 7px;
-    border: solid #f8f8f6 3px;
+    border: solid #f8f8f6 2px;
     outline: none;
     color: #003f63;
     font-size: 24px;
