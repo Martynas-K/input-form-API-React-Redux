@@ -43,16 +43,16 @@
     border: solid #003f63 3px;
     border-radius: 7px;
     background-color: #ffffff;
+    color: #003f63;
     text-align: center;
     font-size: 16px;
     font-weight: bold;
-    color: #003f63;
 
 }
 .input-box::placeholder {
+    color: darkgrey;
     font-size: 13px;
     font-weight: normal;
-    color: darkgrey;
 }
 
 .input-box:focus::placeholder {
@@ -98,5 +98,5 @@
 }
 
 .opacity {
-    opacity: 0.3;
+    opacity: 0.2;
 }

@@ -6,12 +6,10 @@ import {addError, updateInput, validateInput} from "../actions/inputActions";
 import {addResult, addOverlay} from "../actions/resultActions";
 
 class Home extends Component {
-
     handleInputChange = async (e) => {
         let input = e.target.value;
         this.props.updateInputOnChange(input);
         this.props.validateInputOnChange(input);
-        console.log(this.props)
     };
 
     handleSubmit = async (e) => {
@@ -25,13 +23,9 @@ class Home extends Component {
         let errorsAPI = [];
         let showOverlay = false;
 
-        console.log(this.props.input);
-
         if (this.props.input.toLowerCase() === user.toLowerCase()) {
-            console.log('if passed');
             await axios.get('https://c01863c8-3c7b-4f7e-a7a3-5945459c6f3f.mock.pstmn.io/person/' + user.toLowerCase())
                 .then((res) => {
-                    console.log('axios 1 passed');
                     personData = res;
                 }).catch(error => {
                     if (error.response) {
@@ -43,8 +37,6 @@ class Home extends Component {
         if (accessGranted && personData && !errorsAPI.length) {
             await axios.get('https://c01863c8-3c7b-4f7e-a7a3-5945459c6f3f.mock.pstmn.io/facility/' + personData.data.person1)
                 .then((res) => {
-                    console.log('axios 2 passed');
-
                     facilityData = res;
                 }).catch((error) => {
                     if (error.response) {
@@ -55,8 +47,6 @@ class Home extends Component {
         if (accessGranted && facilityData && !errorsAPI.length) {
             await axios.get('https://c01863c8-3c7b-4f7e-a7a3-5945459c6f3f.mock.pstmn.io/exposure/' + facilityData.data.facility2)
                 .then((res) => {
-                    console.log('axios 3 passed');
-
                     exposureData = res;
                 }).catch((error) => {
                     if (error.response) {
@@ -67,15 +57,15 @@ class Home extends Component {
         if (!accessGranted){
             let error = 'You are not Tom. Please go away.';
             let showError = true;
-            this.props.addErrorsOnFetch(error, showError);
+            this.props.addErrorsOnInput(error, showError);
         } else if (errorsAPI.length) {
             let error = 'Failed to receive data from API.';
             let showError = true;
-            this.props.addErrorsOnFetch(error, showError);
+            this.props.addErrorsOnInput(error, showError);
         } else {
             result = facilityData.data.facility2 * exposureData.data.exposure;
-            this.props.addResultOnFetch(result);
             showOverlay = true;
+            this.props.addResultOnFetch(result);
             this.props.showOverlayOnValidSubmit(showOverlay);
         }
     };
@@ -111,11 +101,12 @@ const mapStateToProps = (state) => {
         showOverlay: state.showOverlay
     }
 };
+
 const mapDispatchToProps = (dispatch) => {
   return {
         updateInputOnChange: (input) => { dispatch(updateInput(input)) },
         validateInputOnChange: (input) => { dispatch(validateInput(input)) },
-        addErrorsOnFetch: (error, showError) => { dispatch(addError(error, showError)) },
+        addErrorsOnInput: (error, showError) => { dispatch(addError(error, showError)) },
         addResultOnFetch: (result) => { dispatch(addResult(result)) },
         showOverlayOnValidSubmit: (showOverlay) => { dispatch(addOverlay(showOverlay)) },
   }

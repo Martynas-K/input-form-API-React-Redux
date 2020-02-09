@@ -21,7 +21,6 @@ const rootReducer = (state = initState, action) => {
         let showError;
 
         if(typeof action.input !== "undefined") {
-            error = '';
             if (!action.input.match(/^[A-Za-z]+$/)) {
                 showButton = false;
                 error = "Type letters only please.";
